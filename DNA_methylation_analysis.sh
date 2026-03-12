@@ -1,0 +1,4 @@
+#dorado运行
+dorado  basecaller /public-de6000/jytian/dna_r10.4.1_e8.2_400bps_sup@v4.2.0 --device cuda:all --emit-moves /supool-old/Multi-omics_DATA/Medicago/Medicago_sativa/TGS_fromLiangLab/ONT/M056/M056超长-1/pod5_pass/ --reference /public-supool/home/jytian/WeWork/Medicago_project/01_genome/04.01_final_genome_two_version/v4_final/v4_final_new_chr.fasta  1> M056.bam 2> M056.bam.log
+#deepsignal3运行
+CUDA_VISIBLE_DEVICES=0 deepsignal3 --pod5 call_mods --input_path /supool-old/Multi-omics_DATA/Medicago/Medicago_sativa/TGS_fromLiangLab/ONT/M056/M056超长-1/pod5_pass/ --bam /public-supool/home/jytian/WeWork/Medicago_project/04_methylation/genome_v4_final_methylation/M056.bam  --model_path /public-supool/home/jytian/bin/software/deepsignal3/model/plant_r1041_5khz_C_epoch4.ckpt --result_file pod5.CG.call_mods_final.2.tsv --nproc 100 --nproc_gpu 45 --motifs C --seq_len 13 --signal_len 15
