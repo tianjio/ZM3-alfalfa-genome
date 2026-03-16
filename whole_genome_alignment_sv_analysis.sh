@@ -1,11 +1,31 @@
-#mummer 全基因组比对
-nucmer --mum -t 100 -p HapA_map_HapB HapA.fasta HapB.fasta
+#!/bin/bash
 
-delta-filter  -1 HapA_map_HapB.delta > HapA_map_HapB.filter.delta
+threads=100
+ref=HapA.fasta
+queries=("HapB.fasta" "HapC.fasta" "HapD.fasta")
 
-dnadiff -d HapA_map_HapB.filter.delta
+for q in "${queries[@]}"
+do
+    prefix=$(basename $ref .fasta)_map_$(basename $q .fasta)
 
-show-coords -THrd HapA_map_HapB.filter.delta > HapA_map_HapB.filter.coords
+    # 1. nucmer 全基因组比对
+    nucmer --mum -t $threads -p $prefix $ref $q
 
-#syri 提取结构变异
-syri -k -s /public-supool/home/jytian/miniconda3/bin/show-snps -c HapA_map_HapB.filter.coords  -d HapA_map_HapB.filter.delta -r HapA.fasta  -q HapB.fasta
+    # 2. 过滤最佳比对
+    delta-filter -1 ${prefix}.delta > ${prefix}.filter.delta
+
+    # 3. 统计比对信息
+    dnadiff -d ${prefix}.filter.delta
+
+    # 4. 输出坐标
+    show-coords -THrd ${prefix}.filter.delta > ${prefix}.filter.coords
+
+    # 5. Syri 检测结构变异
+    syri -k \
+        -s /public-supool/home/jytian/miniconda3/bin/show-snps \
+        -c ${prefix}.filter.coords \
+        -d ${prefix}.filter.delta \
+        -r $ref \
+        -q $q
+
+done
